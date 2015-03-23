@@ -16,9 +16,13 @@ module.exports = function(app) {
 		 * Define User Module request
 		 */
 		
-		app.get('/users', user.list);				// list of users 
-		app.get('/user/signup', user.create);		// Signup form
+		// app.get('/users', user.list);				// list of users 
+		// app.get('/user/signup', user.create);		// Sign-up form
 		
 		app.post('/user/signup', user.create);		// create new user
+		app.post('/user/login',  user.login);		// login req 
+		
+		//  Unknown request
+		app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
 
 };

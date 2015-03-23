@@ -10,19 +10,63 @@ var moment 		= require('moment');
 var crypto 		= require('crypto');
 
 
+/**
+ * user login or not 
+ */
+exports.login = function(req, res) {
+	
+	//@TODO : Server validation
+	var username = req.param('username');
+	var plain_password = req.param('password');
+	
+	var error_msg = 'Invalid Username/Pwd ';
+	
+	db.getSingle(
+			 {username : username },
+			 function(error, result) {
+				 if (error) {
+					 res.send(error, 400); //Something is wrong 
+					 return;
+				 } 
+				 
+				 if (!result) { // empty result
+					  res.send(error_msg,  200);
+					  return ;
+				 }
+				 
+				//get hash pwd
+				 var hashed_password = result.password;
+				 
+				//get salt
+				 var salt = hashed_password.substr(0, 10);
+				 
+				 var validHash = salt + md5(plain_password + salt);
+				 
+				 if( hashed_password === validHash) {
+					 //TODO :: callback onLoginSuccess
+					 res.send("Yo Yo!! You have logged-in",  200);
+				 }else {
+					 res.send(error_msg,  200);
+				 }
+			});
+};
+	
 /*
  * GET users listing.
  */
-
 exports.list = function(req, res){
   res.send("//@TODO::display User list");
 };
 
 
+/**
+ * Create new user
+ */
 exports.create = function(req, res) {
-		
-	  // Chck 1# ::Username already exist or not
 	
+	//TODO :: Server validation 
+		
+	// Chck 1# ::Username already exist or not
 	db.getSingle(
 			 {username : req.param('username') },
 			 function(error, result) {
