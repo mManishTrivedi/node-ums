@@ -25,12 +25,18 @@ exports.login = function(req, res) {
 			 {username : username },
 			 function(error, result) {
 				 if (error) {
-					 res.send(error, 400); //Something is wrong 
+					 res.json({ success : false , response_code : 400 ,
+						 		error : { code : 400, message : error }
+						     }); 
+					 //res.send(error, 400); //Something is wrong 
 					 return;
 				 } 
 				 
-				 if (!result) { // empty result
-					  res.send(error_msg,  200);
+				 if (!result) { // empty result, user not exist
+					 res.json({ success : false , response_code : 400 ,
+					 		error : { code : 400, message : error_msg }
+					     });
+					 //res.send(error_msg,  200);
 					  return ;
 				 }
 				 
@@ -42,11 +48,18 @@ exports.login = function(req, res) {
 				 
 				 var validHash = salt + md5(plain_password + salt);
 				 
-				 if( hashed_password === validHash) {
+				 if ( hashed_password === validHash) {
 					 //TODO :: callback onLoginSuccess
-					 res.send("Yo Yo!! You have logged-in",  200);
-				 }else {
-					 res.send(error_msg,  200);
+					 
+					 res.json({	success : true, 
+						 		response_code : 200,
+						 		data : { message : "Yo Yo!! You have logged-in" }
+					 			}); 
+				 } else {
+						res.json({ success : false , response_code : 400 ,
+					 		error : { code : 400, message : error }
+					     });
+					//  res.send(error_msg,  200);
 				 }
 			});
 };
@@ -71,12 +84,20 @@ exports.create = function(req, res) {
 			 {username : req.param('username') },
 			 function(error, result) {
 				 if (error) {
-					 res.send(error, 400); //Something is wrong
+					 res.json({ success : false , response_code : 400 ,
+					 		error : { code : 400, message : error }
+					     });
+					 
+					// res.send(error, 400); //Something is wrong
 					 return;
 				 }
 				 
 				 if (result) {
-					 res.send('Username already exist', 200);
+					 res.json({ success : true , response_code : 200 ,
+					 		data : { code : 400, message : 'Username already exist' }
+					     });
+					 
+					 //res.send('Username already exist', 200);
 					 return;
 				 }
 				 
@@ -86,12 +107,19 @@ exports.create = function(req, res) {
 						 {device_id : req.param('device_id') },
 						 function(error, result) {
 							 if (error) {
-								 res.send(error, 400); // Something is wrong
+								 
+								 res.json({ success : false , response_code : 400 ,
+								 		error : { code : 400, message : error }
+								     });
+								 //res.send(error, 400); // Something is wrong
 								 return;
 							 }
 							 
 							 if (result) {
-								 res.send('Device already exist', 200);
+								 res.json({ success : true , response_code : 200 ,
+								 		data : { message : 'Device already exist' }
+								     });
+								 //res.send('Device already exist', 200);
 								 return;
 							 }
 							 
@@ -113,9 +141,16 @@ exports.create = function(req, res) {
 								  // @TODO :: create log
 									
 									if (error){
-										res.send(error, 400);
+										res.json({ success : false , response_code : 400 ,
+									 		error : { code : 400, message : error }
+									     });
+										//res.send(error, 400);
 									} else {
-										res.send('good user created successfully', 200); 
+										//TODO :: trigger onUserCreation
+										res.json({ success : true , response_code : 200 ,
+									 		data : { message : 'User created successfully' }
+									     });
+										//res.send('good user created successfully', 200); 
 									}
 								}			 
 							);
