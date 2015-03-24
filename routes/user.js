@@ -4,6 +4,7 @@
 // get db from db-driver
 var driver = require('../library/db/driver');
 var db = driver.db;
+var jwt = require('jwt-simple');
 
 // need for current date
 var moment 		= require('moment');
@@ -16,6 +17,10 @@ var crypto 		= require('crypto');
 exports.login = function(req, res) {
 	
 	//@TODO : Server validation
+	// field validation
+	// user already login
+	
+	
 	var username = req.param('username');
 	var plain_password = req.param('password');
 	
@@ -51,9 +56,18 @@ exports.login = function(req, res) {
 				 if ( hashed_password === validHash) {
 					 //TODO :: callback onLoginSuccess
 					 
+					 
+					 var dateObj = new Date();
+					 var expire_days =  dateObj.setDate(dateObj.getDate() + 1 ); // 1 days
+					 var access_token = jwt.encode({exp: expire_days}, require('../config/secret_key')());
+					 
+					 //TODO :: Expire day also send to client
 					 res.json({	success : true, 
 						 		response_code : 200,
-						 		data : { message : "Yo Yo!! You have logged-in" }
+						 		data : {  message : "Yo Yo!! You have logged-in",
+						 				  user_data : result,
+						 				  token     : access_token
+						 				}
 					 			}); 
 				 } else {
 						res.json({ success : false , response_code : 400 ,
@@ -67,8 +81,18 @@ exports.login = function(req, res) {
 /*
  * GET users listing.
  */
-exports.list = function(req, res){
+exports.list = function(req, res) {
   res.send("//@TODO::display User list");
+};
+
+/*
+ * GET users listing.
+ */
+exports.me = function(req, res) {
+	//TODO :: decode token and get user information 
+	 res.json({ success : true , response_code : 200 ,
+	 		data : { message : "Good Job!! Now hire me :P . " }
+	     });
 };
 
 
@@ -167,7 +191,7 @@ exports.create = function(req, res) {
   
   
   /** 
-   * private encryption & validation methods 
+   * private encryption  methods 
    */
 
   var generateSalt = function()

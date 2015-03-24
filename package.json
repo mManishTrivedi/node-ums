@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "*",
     "mongodb": "*",
-    "moment" : "*"
+    "moment" : "*",
+    "jwt-simple" : "*"
   }
 }
