@@ -32,38 +32,41 @@ var mongo_db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: t
 
 	/**
 	 * 
-	 * Select All available Collections
+	 * Class constructor
 	 *  
 	 * @returns none
 	 */
-function mongo_db_class(){
-	/**
-	 *  Select Collection
-	 *  users => {username, password, device_id, created_on}
-	 */
- 
-	this.collection_user = mongo_db.collection('users');
-}
+function mongo_db_class() { }
 
+/**
+ * ==========================================
+ * Static Variables
+ *  Define all collection here
+ * ==========================================
+ */
+mongo_db_class.collection_user = mongo_db.collection('users');
 
-/* record insertion, update & deletion methods */
+/**  
+ * ============== 
+ * 	Public Method
+ * record insertion,fetching methods 
+ * 
+ */
 
 mongo_db_class.prototype.user = 
 {
 		// create user
-		create 	:	
+		insert 	:	
 			function(data, callback) 
-			{
-				// if everything is ok then create user 
-				this.collection_user.insert(data, {safe: true}, callback);	
-			
+			{ 
+				mongo_db_class.collection_user.insert(data, {safe: true}, callback);	
 			},
 			
 		// get single record
 		getOne	:	
-			function(data, callback) 
+			function(conditions, callback) 
 			{
-				this.collection_user.findOne(conditions, callback);	
+				mongo_db_class.collection_user.findOne(conditions, callback);	
 			}
 };
 

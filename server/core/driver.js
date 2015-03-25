@@ -10,7 +10,7 @@ var config_db = 'mongo';
 function DataBase()
 {
 	// Return according to config db
-	return require('./'+config_db);
+	return require('./driver/'+config_db);
 }
 
 
