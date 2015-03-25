@@ -18,6 +18,30 @@ var crypto 		= require('crypto');
 function User() { }
 
 /**
+ * Get current login user
+ * 
+ * @param req
+ * @param res
+ * @param next
+ */
+User.prototype.me =
+	function (req, res, next)
+	{	
+		if ( !global.loggedin_user ) 
+		{
+			res.json({success : false, response_code : 500 , error : { code : 500 , message : 'you dont have permission'}});
+			return ;
+		}
+		
+		var username = global.loggedin_user.username;
+		
+		res.json({
+			sucess : true, response_code : 200 ,
+			data : { message : 'Hello ' + username}
+		});
+	};
+
+/**
  * Invoke to register user
  * @param req
  * @param res

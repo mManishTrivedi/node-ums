@@ -22,8 +22,8 @@ module.exports = function(app) {
 		 */
 
 		// Validate request
-		//app.all('/api/v1/*', require('./validate_request.js'));
-		//app.post('/api/v1/me', user.me);
+		app.all('/api/v1/*', require('./validate_request.js'));
+		app.post('/api/v1/me', user.me);
 		
 		/*
 		 *   Unknown request
