@@ -122,13 +122,74 @@ User.prototype.register =
 User.prototype.login = 
 	function (req, res, next)
 	{
-		//TODO :: trigger onUserLogin
-		res.json(
-				 { success : true , response_code : 200 ,
-				   data : { message : 'User Login Successfully' }
-				 });
 		
-	}
+	//TODO : Server validation
+	// field validation
+	// user already login
+	
+	var username = req.param('username');
+	var plain_password = req.param('password');
+	
+	var error_msg = 'Invalid Username/Pwd ';
+	
+	// check user exist or not
+	database.user.getOne(
+			 {username : username } ,
+			 function(error, result) {
+				 
+				 // Ohh Somthing is going wrong
+				 if (error) {
+					 res.json({ success : false , response_code : 401 ,
+						 		error : { code : 401, message : error }
+						     });  
+					 return;
+				 } 
+				 
+				 // if user is not exist
+				 if (!result) { 
+					 res.json({ success : false , response_code : 401 ,
+					 		error : { code : 401, message : error_msg }
+					     });
+					 
+					 return ;
+				 }
+				 
+				 //get hash pwd
+				 var hashed_password = result.password;
+				 
+				//get salt
+				 var salt = hashed_password.substr(0, 10);
+				 
+				 var validHash = salt + md5(plain_password + salt);
+				 
+				 if ( hashed_password === validHash) {
+					 //TODO :: callback onLoginSuccess
+					 
+					 var dateObj = new Date();
+					 // TODO :: Hard coded expire days. Get from server config
+					 var expire_days =  dateObj.setDate(dateObj.getDate() + 1 );
+					 var access_token = jwt.encode(
+							 					{exp: expire_days, username : result.username }, 
+							 					require('../config/secret_key')()
+							 					);
+					 
+					 //TODO :: Expire day also send to client
+					 res.json({	success : true, 
+						 		response_code : 200,
+						 		data : {  message : "Yo Yo!! You have logged-in",
+						 				  user_data : result,
+						 				  token     : access_token
+						 				}
+					 			});
+					 return ;
+				 } 
+				 
+				 // wrong password
+				 res.json({ success : false , response_code : 401 ,
+					 		error : { code : 400, message : error_msg }
+				   });
+			});
+	};
 	 
 
 
