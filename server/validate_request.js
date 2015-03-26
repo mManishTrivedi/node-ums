@@ -9,7 +9,8 @@ global.loggedin_user = false;
  */
 module.exports = function(req, res, next) {
 
-  var token =    req.body.token ;
+  // get token from request {POST, GET, body, Query }
+  var token =    req.param('token') ;
 
   if (token) {
     try {
